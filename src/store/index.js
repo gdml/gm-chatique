@@ -6,22 +6,32 @@ import notifications from './notifications';
 import chatkit from '../helpers/chatkit';
 import MessageLibrary from '../helpers/message_library';
 
+async function getFromChatAPI(url, options, state) {
+  return axios({
+    url,
+    ...options,
+    baseURL: state.options.url,
+    headers: {
+      Authorization: `JWT ${state.options.token}`,
+    },
+  });
+}
+
 export default {
   namespaced: true,
   modules: {
     notifications,
   },
-  state() {
-    return {
-      room: null,
-      rooms: [],
-      token: null,
-      messages: {},
-      connected: false,
-      connecting: false,
-      isUploadPopupVisible: false,
-      isInputFocused: false,
-    };
+  state: {
+    room: null,
+    rooms: [],
+    token: null,
+    messages: {},
+    connected: false,
+    connecting: false,
+    isUploadPopupVisible: false,
+    isInputFocused: false,
+    options: {},
   },
   getters: {
     groupByDate: (state, getters) => MessageLibrary.group(getters.currentRoomMessages),
@@ -33,24 +43,24 @@ export default {
     },
   },
   actions: {
-    async INIT({ dispatch }) {
-      return Promise.all([
-        dispatch('GET_ROOMS'),
-      ]);
+    async INIT({ dispatch, commit }, options) {
+      commit('SET_OPTIONS', options);
+
+      await dispatch('GET_ROOMS');
     },
-    async GET_ROOM({ commit }, id) {
-      const response = await axios(`/api/v1/rooms/${id}/`);
+    async GET_ROOM({ state, commit }, id) {
+      const response = await getFromChatAPI(`/api/v1/rooms/${id}/`, {}, state);
 
       commit('SET_ROOM', response.data);
     },
 
-    async GET_ROOMS({ commit }) {
-      const response = await axios('/api/v1/rooms/');
+    async GET_ROOMS({ state, commit }) {
+      const response = await getFromChatAPI('/api/v1/rooms/', {}, state);
 
       commit('SET_ROOMS', response.data);
     },
-    async CREATE_ROOM({ commit }, customerId) {
-      const response = await axios('/api/v1/rooms/', { method: 'post', data: { customer: customerId } });
+    async CREATE_ROOM({ state, commit }, customerId) {
+      const response = await getFromChatAPI('/api/v1/rooms/', { method: 'post', data: { customer: customerId } }, state);
 
       commit('SET_ROOM', response.data);
     },
@@ -98,6 +108,9 @@ export default {
     },
   },
   mutations: {
+    SET_OPTIONS(state, options) {
+      state.options = { ...state.options, ...options };
+    },
     SET_ROOM(state, room) {
       state.room = room;
 

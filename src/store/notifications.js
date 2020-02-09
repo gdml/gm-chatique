@@ -2,10 +2,8 @@ import uuid from 'uuid';
 
 export default {
   namespaced: true,
-  state() {
-    return {
-      container: [],
-    };
+  state: {
+    container: [],
   },
   getters: {
     notifications: (state) => state.container || [],

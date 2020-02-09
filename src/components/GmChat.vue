@@ -89,7 +89,6 @@ export default {
       this.SET_CONNECTING(true);
 
       await this.GET_ROOM(this.roomId);
-      // await this.CONNECT();
       await this.CONNECT(this.user.id);
       await this.JOIN_ROOM(this.roomId);
 
