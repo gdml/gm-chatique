@@ -1,4 +1,4 @@
-# gm-chat
+# gm-chatique
 
 ### Run your unit tests
 ```
