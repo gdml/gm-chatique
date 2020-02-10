@@ -1,18 +1,19 @@
 import axios from 'axios';
 import get from 'lodash.get';
 
+import auth from './auth';
 import notifications from './notifications';
 
 import chatkit from '../helpers/chatkit';
 import MessageLibrary from '../helpers/message_library';
 
-async function getFromChatAPI(url, options, state) {
+async function getFromChatAPI(url, options, { state, rootState }) {
   return axios({
     url,
     ...options,
-    baseURL: state.options.url,
+    baseURL: state.config.url,
     headers: {
-      Authorization: `JWT ${state.options.token}`,
+      Authorization: `JWT ${rootState.gmChat.auth.token}`,
     },
   });
 }
@@ -20,6 +21,7 @@ async function getFromChatAPI(url, options, state) {
 export default {
   namespaced: true,
   modules: {
+    auth,
     notifications,
   },
   state: {
@@ -31,7 +33,7 @@ export default {
     connecting: false,
     isUploadPopupVisible: false,
     isInputFocused: false,
-    options: {},
+    config: {},
   },
   getters: {
     groupByDate: (state, getters) => MessageLibrary.group(getters.currentRoomMessages),
@@ -41,30 +43,41 @@ export default {
 
       return messages[messages.length - 1];
     },
+    platform: (state) => {
+      const platform = state.config.platform || {};
+
+      return { ...platform, is: platform.is || {} };
+    },
   },
   actions: {
-    async INIT({ dispatch, commit }, options) {
-      commit('SET_OPTIONS', options);
+    async INIT({ dispatch, commit }, config) {
+      commit('SET_CONFIG', config);
+
+      dispatch('gmChat/auth/SET_AUTH_DATA', { token: config.token, user: config.user }, { root: true });
 
       await dispatch('GET_ROOMS');
     },
-    async GET_ROOM({ state, commit }, id) {
-      const response = await getFromChatAPI(`/api/v1/rooms/${id}/`, {}, state);
+    async GET_ROOM(ctx, id) {
+      const response = await getFromChatAPI(`/api/v1/rooms/${id}/`, {}, ctx);
 
-      commit('SET_ROOM', response.data);
+      ctx.commit('SET_ROOM', response.data);
     },
 
-    async GET_ROOMS({ state, commit }) {
-      const response = await getFromChatAPI('/api/v1/rooms/', {}, state);
+    async GET_ROOMS(ctx) {
+      const response = await getFromChatAPI('/api/v1/rooms/', {}, ctx);
 
-      commit('SET_ROOMS', response.data);
+      ctx.commit('SET_ROOMS', response.data);
     },
-    async CREATE_ROOM({ state, commit }, customerId) {
-      const response = await getFromChatAPI('/api/v1/rooms/', { method: 'post', data: { customer: customerId } }, state);
+    async CREATE_ROOM(ctx) {
+      const customerId = ctx.rootState.gmChat.auth.user.customer_id;
 
-      commit('SET_ROOM', response.data);
+      const response = await getFromChatAPI('/api/v1/rooms/', { method: 'post', data: { customer: customerId } }, ctx);
+
+      ctx.commit('SET_ROOM', response.data);
     },
-    async CONNECT({ commit }, userId) {
+    async CONNECT({ rootState, commit }) {
+      const userId = rootState.gmChat.auth.user.id;
+
       try {
         commit('SET_CONNECTING', true);
         chatkit.currentUser = await chatkit.connect(userId);
@@ -106,10 +119,16 @@ export default {
         ...message,
       });
     },
+    RESET({ commit }) {
+      commit('RESET_CHAT');
+    },
   },
   mutations: {
-    SET_OPTIONS(state, options) {
-      state.options = { ...state.options, ...options };
+    SET_CONFIG(state, config) {
+      state.config = config;
+    },
+    SET_UPDATE(state, config) {
+      state.config = { ...state.config, ...config };
     },
     SET_ROOM(state, room) {
       state.room = room;

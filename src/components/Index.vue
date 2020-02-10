@@ -3,7 +3,7 @@
     <div class="gm-chat__wrapper">
       <ChatNotifications class="gm-chat__notifications" :is-online="isOnline" :last-message-date="lastMessageDate" />
       <div ref="messages" class="gm-chat__messages" :class="{ 'gm-chat__messages--connecting': isOnline && connecting }">
-        <MessageGroup v-for="(group, i) in groupByDate" :key="`gm-chat__message-group-${i}`" class="gm-chat__message-group" :user="user" :messages="group" :platform="normalizedPlatform" />
+        <MessageGroup v-for="(group, i) in groupByDate" :key="`gm-chat__message-group-${i}`" class="gm-chat__message-group" :user="user" :messages="group" :platform="platform" />
       </div>
       <ChatForm class="gm-chat__form" :is-online="isOnline" />
       <UploadFilePopup :platform="platform" />
@@ -32,22 +32,17 @@ export default {
     UploadFilePopup,
   },
   props: {
-    user: { type: Object, required: true },
     roomId: { type: [String, Number], required: true },
-    platform: { type: Object, default: null },
     connectionStatus: { type: String, default: CONNECTION_STATUSES.ONLINE },
   },
   computed: {
     ...mapState('gmChat', ['connecting']),
+    ...mapState('gmChat/auth', ['user']),
     ...mapGetters('gmChat', [
+      'platform',
       'groupByDate',
       'lastMessageOfCurrentRoom',
     ]),
-    normalizedPlatform() {
-      const platform = this.platform || {};
-
-      return { is: platform.is || {} };
-    },
     isOnline() {
       return this.connectionStatus === CONNECTION_STATUSES.ONLINE;
     },
@@ -89,7 +84,7 @@ export default {
       this.SET_CONNECTING(true);
 
       await this.GET_ROOM(this.roomId);
-      await this.CONNECT(this.user.id);
+      await this.CONNECT();
       await this.JOIN_ROOM(this.roomId);
 
       this.SET_CONNECTING(false);

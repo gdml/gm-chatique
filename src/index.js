@@ -1,12 +1,16 @@
-import GmChat from './components/GmChat.vue';
-
-import store from './store';
-import loadPlugins from './helpers/loadPlugins';
+import registerStore from './helpers/registerStore';
+import registerPlugins from './helpers/registerPlugins';
+import registerComponent from './helpers/registerComponent';
+import registerApi from './helpers/registerApi';
 
 export default (Vue, options) => {
-  options.store.registerModule('gmChat', store);
+  const context = {
+    Vue,
+    store: options.store,
+  };
 
-  loadPlugins({ Vue });
-
-  Vue.component('GmChat', GmChat);
+  registerStore(context);
+  registerPlugins(context);
+  registerComponent(context);
+  registerApi(context);
 };
