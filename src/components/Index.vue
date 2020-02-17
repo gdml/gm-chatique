@@ -165,7 +165,6 @@ export default {
 
 <style lang="scss" scoped>
 .gm-chat {
-  min-height: 600px;
   position: relative;
   background-color: hsl(0, 0%, 100%);
 
