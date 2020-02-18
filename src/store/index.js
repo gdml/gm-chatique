@@ -80,12 +80,12 @@ export default {
       ctx.commit('SET_ROOM', response.data);
     },
     async CONNECT({ rootState, commit }) {
-      const chatkitInstance = rootState.gmChat.auth.chatkitInstance;
+      const instance = rootState.gmChat.auth.chatkitInstance;
       const userId = rootState.gmChat.auth.user.id;
 
       try {
         commit('SET_CONNECTING', true);
-        chatkit.currentUser = await chatkit.connect(chatkitInstance, userId);
+        chatkit.currentUser = await chatkit.connect(instance, userId);
         commit('SET_CONNECTED', true);
       } catch (e) {
         commit('SET_CONNECTED', false);
