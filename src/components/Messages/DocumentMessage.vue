@@ -1,5 +1,5 @@
 <template>
-  <a :href="message.data.src" class="gm-chat-message--link" download>
+  <a :href="message.data.src" class="gm-chat-message--document" download>
     <div class="gm-chat-message__text" v-text="message.data.name" />
     <div class="gm-chat-message__subtext" v-text="size" />
     <div class="gm-chat-message__readmore-holder">

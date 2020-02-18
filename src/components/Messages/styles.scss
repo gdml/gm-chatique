@@ -18,6 +18,8 @@
   border-top-left-radius: 0;
   font-size: 17px;
   line-height: 20px;
+  position: relative;
+  text-decoration: none;
 
   &--outgoing {
     --background-color: var(--outgoing-background-color);
@@ -28,11 +30,8 @@
     margin-left: auto;
   }
 
-  &--link {
+  &--document {
     --padding: 10px 70px 10px 15px;
-
-    position: relative;
-    text-decoration: none;
   }
 
   &__action {

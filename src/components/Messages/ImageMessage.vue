@@ -1,9 +1,9 @@
 <template>
-  <div class="gm-chat-image-message">
+  <a :href="message.data.src" class="gm-chat-image-message" target="_blank">
     <div class="gm-chat-message__text">
       <img class="gm-chat-image-message__image" :src="message.data.src">
     </div>
-  </div>
+  </a>
 </template>
 
 <script>
