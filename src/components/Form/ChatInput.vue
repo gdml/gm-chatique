@@ -28,7 +28,9 @@ export default {
   },
   watch: {
     value(val) {
-      this.$refs.chatInput.innerText = val || '';
+      if (!val) {
+        this.$refs.chatInput.innerText = '';
+      }
     },
     isInputFocused(val) {
       if (val) {
@@ -38,7 +40,8 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
+    await this.$nextTick();
     this.$refs.chatInput.innerText = this.normalizeValue(this.normalizedValue);
     this.$refs.chatInput.focus();
 
