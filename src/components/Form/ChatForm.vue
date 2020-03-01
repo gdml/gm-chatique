@@ -22,15 +22,18 @@ export default {
   props: {
     isOnline: { type: Boolean, required: true },
   },
-  data() {
-    return {
-      text: '',
-    };
-  },
   computed: {
-    ...mapState('gmChat', ['connected']),
+    ...mapState('gmChat', ['connected', 'messageText']),
     offline() {
       return !this.isOnline || !this.connected;
+    },
+    text: {
+      get() {
+        return this.messageText;
+      },
+      set(message) {
+        this.SET_MESSAGE_TEXT(message);
+      },
     },
   },
   methods: {
@@ -38,6 +41,7 @@ export default {
     ...mapMutations('gmChat', [
       'SET_UPLOAD_POPUP_VISIBILITY',
       'TOGGLE_INPUT_FOCUS',
+      'SET_MESSAGE_TEXT',
     ]),
     openUploadMenu() {
       this.SET_UPLOAD_POPUP_VISIBILITY(true);
