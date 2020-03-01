@@ -28,9 +28,7 @@ export default {
   },
   watch: {
     value(val) {
-      if (!val) {
-        this.$refs.chatInput.innerText = '';
-      }
+      this.$refs.chatInput.innerText = val || '';
     },
     isInputFocused(val) {
       if (val) {
