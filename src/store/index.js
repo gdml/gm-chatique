@@ -34,6 +34,7 @@ export default {
     isUploadPopupVisible: false,
     isInputFocused: false,
     config: {},
+    messageText: null,
   },
   getters: {
     groupByDate: (state, getters) => MessageLibrary.group(getters.currentRoomMessages),
@@ -171,6 +172,9 @@ export default {
     },
     TOGGLE_INPUT_FOCUS(state, is) {
       state.isInputFocused = is;
+    },
+    SET_MESSAGE_TEXT(state, message) {
+      state.messageText = message;
     },
   },
 };
