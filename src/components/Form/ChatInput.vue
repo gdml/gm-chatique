@@ -42,7 +42,8 @@ export default {
   },
   async mounted() {
     await this.$nextTick();
-    this.$refs.chatInput.innerText = this.normalizeValue(this.normalizedValue);
+
+    this.$refs.chatInput.innerText = this.normalizeValue(this.value);
     this.$refs.chatInput.focus();
 
     this.TOGGLE_INPUT_FOCUS(true);

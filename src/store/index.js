@@ -34,7 +34,7 @@ export default {
     isUploadPopupVisible: false,
     isInputFocused: false,
     config: {},
-    messageText: null,
+    messageText: '',
   },
   getters: {
     groupByDate: (state, getters) => MessageLibrary.group(getters.currentRoomMessages),
