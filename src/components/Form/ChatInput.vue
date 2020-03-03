@@ -52,8 +52,7 @@ export default {
   methods: {
     ...mapMutations('gmChat', ['TOGGLE_INPUT_FOCUS']),
     normalizeValue(val) {
-      // return val ? val.trim() : '';
-      return val || '';
+      return val ? val.trim() : '';
     },
     setValue(val) {
       this.$refs.chatInput.textContent = val;
@@ -114,10 +113,11 @@ export default {
 
   &__field {
     padding: 10px 15px;
-    outline: none;
+    white-space: pre-wrap;
     color: hsl(0, 0%, 13%);
     max-height: 200px;
     overflow-y: auto;
+    outline: none;
   }
 
   &__placeholder {
