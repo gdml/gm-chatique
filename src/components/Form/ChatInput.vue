@@ -28,36 +28,73 @@ export default {
   },
   watch: {
     value(val) {
-      if (!val) {
-        this.$refs.chatInput.innerText = '';
-      }
+      if (val) return;
+
+      this.setValue('');
     },
     isInputFocused(val) {
       if (val) {
-        this.$refs.chatInput.focus();
+        this.focus();
       } else {
-        this.$refs.chatInput.blur();
+        this.blur();
       }
     },
   },
   async mounted() {
     await this.$nextTick();
 
-    this.$refs.chatInput.innerText = this.normalizeValue(this.value);
-    this.$refs.chatInput.focus();
+    this.setValue(this.value);
+    this.focus();
+    this.setSelectionRange(this.value.length, this.value.length);
 
     this.TOGGLE_INPUT_FOCUS(true);
   },
   methods: {
     ...mapMutations('gmChat', ['TOGGLE_INPUT_FOCUS']),
-    normalizeValue(val = '') {
-      return val.trim();
+    normalizeValue(val) {
+      return val ? val.trim() : '';
+    },
+    setValue(val) {
+      this.$refs.chatInput.textContent = val;
+    },
+    setSelectionRange(positionStart, positionEnd) {
+      const el = this.$refs.chatInput;
+
+      if (!document || !el) return;
+
+      const range = document.createRange();
+      const selection = document.getSelection();
+
+      const textNode = el.childNodes.item('text');
+
+      if (!textNode) return;
+
+      range.selectNode(el);
+      range.setStart(textNode, positionStart || 0);
+      range.setEnd(textNode, positionEnd || 0);
+
+      selection.removeAllRanges();
+      selection.addRange(range);
+    },
+    focus() {
+      const el = this.$refs.chatInput;
+
+      if (!el) return;
+
+      el.focus();
+    },
+    blur() {
+      const el = this.$refs.chatInput;
+
+      if (!el) return;
+
+      el.blur();
     },
     onBlur() {
       this.TOGGLE_INPUT_FOCUS(false);
     },
     onInput(e) {
-      this.$emit('input', this.normalizeValue(e.target.innerText));
+      this.$emit('input', this.normalizeValue(e.target.textContent));
     },
   },
 };
@@ -76,10 +113,11 @@ export default {
 
   &__field {
     padding: 10px 15px;
-    outline: none;
+    white-space: pre-wrap;
     color: hsl(0, 0%, 13%);
     max-height: 200px;
     overflow-y: auto;
+    outline: none;
   }
 
   &__placeholder {
