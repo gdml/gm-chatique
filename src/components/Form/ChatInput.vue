@@ -1,6 +1,6 @@
 <template>
   <div class="gm-chat-input">
-    <div ref="chatInput" class="gm-chat-input__field" contenteditable role="textbox" aria-multiline @keydown.shift.enter.prevent="$emit('submit')" v-on="listeners" />
+    <div ref="chatInput" class="gm-chat-input__field" contenteditable role="textbox" aria-multiline @keydown.enter.prevent="$emit('submit')" v-on="listeners" />
     <div v-show="showPlaceholder" class="gm-chat-input__placeholder" v-text="placeholder" />
   </div>
 </template>

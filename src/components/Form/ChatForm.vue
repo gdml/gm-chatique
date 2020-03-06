@@ -1,10 +1,10 @@
 <template>
-  <form class="gm-chat-form">
+  <form class="gm-chat-form" @submit.prevent="sendTextMessage">
     <div class="gm-chat-form__upload" @click="openUploadMenu">
       <GmChatIcon name="gm-chat-add" class="gm-chat-form__upload-icon" />
     </div>
     <ChatInput v-model="text" placeholder="Отправьте сообщение…" @submit="sendTextMessage" />
-    <SendButton :disabled="!text.length || offline" @click.native="sendTextMessage" />
+    <SendButton :disabled="!text.length || offline" @click.native.prevent="sendTextMessage" />
   </form>
 </template>
 
