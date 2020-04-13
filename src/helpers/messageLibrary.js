@@ -5,12 +5,12 @@ export default {
     /** Returns hash for particular message needs to be able to group by date and author */
     if (!message) return null;
 
-    return `${dayjs(message.date).format('YYYYMMDDHHmm')}${message.author}`;
+    return `${dayjs(message.timestamp).format('YYYYMMDDHHmm')}${message.author}`;
   },
 
   sortByDate(messages) {
     /** Returns messages sorted by date (old goes first) */
-    return [...messages].sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+    return [...messages].sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
   },
 
   group(messages) {

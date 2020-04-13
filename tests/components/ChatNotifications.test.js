@@ -44,15 +44,11 @@ const createWrapper = () => shallowMount(ChatNotifications, {
 
 describe('show computed', () => {
   each([
-    [false, false, true, true],
-    [false, true, false, true],
-    [false, false, false, true],
-    [true, true, false, true],
-    [true, true, true, false],
-    [false, true, true, false],
-  ]).test('Shows component when user is online and chat is connected (connecting %s -> connected %s -> isOnline %s -> expected %s', (connecting, connected, isOnline, expected) => {
-    props.isOnline = isOnline;
-
+    [false, false, true],
+    [false, true, false],
+    [true, true, false],
+    [false, true, false],
+  ]).test('Shows component when user is online and chat is connected (connecting %s -> connected %s -> isOnline %s -> expected %s', (connecting, connected, expected) => {
     computed.connecting = () => connecting;
     computed.connected = () => connected;
 

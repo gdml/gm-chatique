@@ -1,6 +1,6 @@
 <template>
-  <a :href="message.data.src" class="gm-chat-message--document" download>
-    <div class="gm-chat-message__text" v-text="message.data.name" />
+  <a :href="message.media.url" class="gm-chat-message--document" download>
+    <div class="gm-chat-message__text" v-text="message.media.filename" />
     <div class="gm-chat-message__subtext" v-text="size" />
     <div class="gm-chat-message__readmore-holder">
       <GmChatIcon class="gm-chat-message__readmore-icon" name="gm-chat-chevron-next" />
@@ -17,7 +17,7 @@ export default {
   },
   computed: {
     size() {
-      return filesize(this.message.data.size, { locale: 'ru' });
+      return filesize(this.message.media.size, { locale: 'ru' });
     },
   },
 };

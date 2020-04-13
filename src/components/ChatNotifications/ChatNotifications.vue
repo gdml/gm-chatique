@@ -2,7 +2,7 @@
   <div class="gm-chat-notifications">
     <transition name="gm-chat-notifications__messages-fade">
       <ChatNotificationsMessage v-if="show" heading="Нет подключения к интернету" :subheading="subheading" icon="gm-chat-no-internet" />
-      <ChatNotificationsMessage v-if="connecting && isOnline" heading="Подключение к сети…" subheading="Загрузка сообщений и проверка соединения" spinner />
+      <ChatNotificationsMessage v-if="connecting" heading="Подключение к сети…" subheading="Загрузка сообщений и проверка соединения" spinner />
     </transition>
     <transition-group class="gm-chat-notifications__container" tag="ul" name="gm-chat-notifications__container-fade" :duration="{ enter: 250, leave: 0 }">
       <ChatNotificationsItem v-for="notification in notifications" :key="notification.id" class="gm-chat-notifications__notification" v-bind="notification" />
@@ -26,7 +26,6 @@ export default {
     ChatNotificationsItem,
   },
   props: {
-    isOnline: { type: Boolean, required: true },
     lastMessageDate: { type: String, default: null },
   },
   computed: {
@@ -36,7 +35,7 @@ export default {
     ]),
     ...mapGetters('gmChat/notifications', ['notifications']),
     show() {
-      return !this.isOnline || (!this.connected && !this.connecting);
+      return !this.connected && !this.connecting;
     },
     date() {
       if (!this.lastMessageDate) return null;

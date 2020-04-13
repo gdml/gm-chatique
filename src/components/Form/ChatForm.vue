@@ -19,13 +19,10 @@ export default {
     ChatInput,
     SendButton,
   },
-  props: {
-    isOnline: { type: Boolean, required: true },
-  },
   computed: {
     ...mapState('gmChat', ['connected', 'messageText']),
     offline() {
-      return !this.isOnline || !this.connected;
+      return !this.connected;
     },
     text: {
       get() {
@@ -49,7 +46,7 @@ export default {
     sendTextMessage() {
       this.TOGGLE_INPUT_FOCUS(true);
 
-      this.SEND_MESSAGE({ parts: [{ type: 'text/plain', content: this.text }] });
+      this.SEND_MESSAGE(this.text);
 
       this.$emit('submit');
       this.text = '';

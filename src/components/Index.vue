@@ -1,12 +1,16 @@
 <template>
   <div class="gm-chat">
     <div class="gm-chat__wrapper">
-      <ChatNotifications class="gm-chat__notifications" :is-online="isOnline" :last-message-date="lastMessageDate" />
-      <div ref="messages" class="gm-chat__messages" :class="{ 'gm-chat__messages--connecting': isOnline && connecting }">
-        <MessageGroup v-for="(group, i) in groupByDate" :key="`gm-chat__message-group-${i}`" class="gm-chat__message-group" :user="user" :messages="group" :platform="platform" />
+      <ChatNotifications class="gm-chat__notifications" :last-message-date="lastMessageDate" />
+      <div ref="messages" class="gm-chat__messages"
+           :class="{ 'gm-chat__messages--connecting': connecting }"
+      >
+        <MessageGroup v-for="(group, i) in groupByDate" :key="`gm-chat__message-group-${i}`"
+                      class="gm-chat__message-group" :user="user" :messages="group"
+        />
       </div>
-      <ChatForm class="gm-chat__form" :is-online="isOnline" />
-      <UploadFilePopup :platform="platform" />
+      <ChatForm class="gm-chat__form" />
+      <UploadFilePopup />
     </div>
   </div>
 </template>
@@ -14,15 +18,13 @@
 <script>
 import get from 'lodash.get';
 
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 
 import ChatNotifications from './ChatNotifications/ChatNotifications.vue';
 import MessageGroup from './MessageGroup.vue';
 import ChatForm from './Form/ChatForm.vue';
 
 import UploadFilePopup from './Form/UploadFilePopup.vue';
-
-import CONNECTION_STATUSES from '../constants/connectionStatuses';
 
 export default {
   components: {
@@ -32,34 +34,24 @@ export default {
     UploadFilePopup,
   },
   props: {
-    roomId: { type: [String, Number], required: true },
-    connectionStatus: { type: String, default: CONNECTION_STATUSES.ONLINE },
+    channelId: { type: [String, Number], required: true },
   },
   computed: {
     ...mapState('gmChat', ['connecting']),
-    ...mapState('gmChat/auth', ['user']),
     ...mapGetters('gmChat', [
-      'platform',
       'groupByDate',
-      'lastMessageOfCurrentRoom',
+      'lastMessageOfCurrentChannel',
+      'user',
     ]),
-    isOnline() {
-      return this.connectionStatus === CONNECTION_STATUSES.ONLINE;
-    },
     lastMessageIsMine() {
-      return get(this.lastMessageOfCurrentRoom, 'author') === String(this.user.id);
+      return get(this.lastMessageOfCurrentChannel, 'author') === String(this.user.id);
     },
     lastMessageDate() {
-      return get(this.lastMessageOfCurrentRoom, 'date');
+      return get(this.lastMessageOfCurrentChannel, 'date');
     },
   },
   watch: {
-    async roomId() {
-      await this.init();
-    },
-    async isOnline(val) {
-      if (!val) return;
-
+    async channelId() {
       await this.init();
     },
     groupByDate() {
@@ -76,18 +68,14 @@ export default {
   methods: {
     ...mapActions('gmChat', [
       'CONNECT',
-      'JOIN_ROOM',
-      'GET_ROOM',
+      'GET_ALL_MESSAGES',
     ]),
-    ...mapMutations('gmChat', ['SET_CONNECTING']),
     async init() {
-      this.SET_CONNECTING(true);
-
-      await this.GET_ROOM(this.roomId);
-      await this.CONNECT();
-      await this.JOIN_ROOM(this.roomId);
-
-      this.SET_CONNECTING(false);
+      const channelUniqueName = await this.CONNECT(this.channelId);
+      if (channelUniqueName) {
+        await this.GET_ALL_MESSAGES();
+        this.toBottom();
+      }
     },
     async toBottom() {
       await this.$nextTick();

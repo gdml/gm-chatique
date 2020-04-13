@@ -46,14 +46,14 @@ describe('isOutgoing computed, returns true if the message from current user', (
 
 describe('getComponent computed, returns component class for message type', () => {
   each([
-    ['text/plain', TextMessage],
-    ['image/jpg', ImageMessage],
-    ['image/da_vashe_poebat', ImageMessage],
-    ['application/pdf', DocumentMessage],
-    ['application/msword', DocumentMessage],
-    ['non_existent', UnsupportedMessage],
-  ]).test('Returns component class for particular message type %s', (type, expected) => {
-    props.message = { data: { type } };
+    ['text', null, TextMessage],
+    ['media', { contentType: 'image/jpg' }, ImageMessage],
+    ['media', { contentType: 'image/da_vashe_poebat' }, ImageMessage],
+    ['media', { contentType: 'application/pdf' }, DocumentMessage],
+    ['media', { contentType: 'application/msword' }, DocumentMessage],
+    ['foobar', { contentType: 'non_existent' }, UnsupportedMessage],
+  ]).test('Returns component class for particular message type %s', (type, media, expected) => {
+    props.message = { type, media };
 
     const wrapper = createWrapper();
 
