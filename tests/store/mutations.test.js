@@ -8,12 +8,12 @@ describe('RECEIVE_MESSAGE', () => {
       },
     };
 
-    store.mutations.RECEIVE_MESSAGE(state, { roomId: 100500, message: { id: 1, text: 'lol' } });
-    store.mutations.RECEIVE_MESSAGE(state, { roomId: 100500, message: { id: 2, text: 'kek' } });
+    store.mutations.RECEIVE_MESSAGE(state, { channelName: 100500, message: { sid: 1, text: 'lol' } });
+    store.mutations.RECEIVE_MESSAGE(state, { channelName: 100500, message: { sid: 2, text: 'kek' } });
 
     expect(state.messages[100500]).toEqual([
-      { id: 1, text: 'lol' },
-      { id: 2, text: 'kek' },
+      { sid: 1, text: 'lol' },
+      { sid: 2, text: 'kek' },
     ]);
   });
 
@@ -24,9 +24,9 @@ describe('RECEIVE_MESSAGE', () => {
       },
     };
 
-    store.mutations.RECEIVE_MESSAGE(state, { roomId: 100500, message: { id: 1, text: 'lol' } });
-    store.mutations.RECEIVE_MESSAGE(state, { roomId: 100500, message: { id: 1, text: 'kek' } });
+    store.mutations.RECEIVE_MESSAGE(state, { channelName: 100500, message: { sid: 1, text: 'lol' } });
+    store.mutations.RECEIVE_MESSAGE(state, { channelName: 100500, message: { sid: 1, text: 'kek' } });
 
-    expect(state.messages[100500]).toEqual([{ id: 1, text: 'kek' }]);
+    expect(state.messages[100500]).toEqual([{ sid: 1, text: 'kek' }]);
   });
 });

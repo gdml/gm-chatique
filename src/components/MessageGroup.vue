@@ -1,7 +1,7 @@
 <template>
   <div v-if="messages.length" class="gm-chat-message-group">
     <div class="gm-chat-message-group__messages">
-      <MessageObserver v-for="message in messages" :key="message.id" class="gm-chat-message-group__message" :user="user" :message="message" :platform="platform" />
+      <MessageObserver v-for="message in messages" :key="message.id" class="gm-chat-message-group__message" :user="user" :message="message" />
     </div>
     <div class="gm-chat-message-group__time" :class="{ 'gm-chat-message-group__time--outgoing': isOutgoing }" v-text="time" />
   </div>
@@ -19,11 +19,10 @@ export default {
   props: {
     user: { type: Object, required: true },
     messages: { type: Array, required: true },
-    platform: { type: Object, required: true },
   },
   computed: {
     time() {
-      return dayjs(this.messages[0].date).format('HH:mm');
+      return dayjs(this.messages[0].timestamp).format('HH:mm');
     },
     isOutgoing() {
       return this.messages.some((msg) => msg.author === String(this.user.id));

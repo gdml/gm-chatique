@@ -1,6 +1,6 @@
 import each from 'jest-each';
 
-import MessageLibrary from '@/helpers/message_library';
+import MessageLibrary from '@/helpers/messageLibrary';
 
 describe('getHash', () => {
   it('Returns null if no message provided', () => {
@@ -10,10 +10,10 @@ describe('getHash', () => {
   });
 
   each([
-    [{ date: '2019-10-28T12:58:17', author: 'gdml' }, '201910281258gdml'],
-    [{ date: '2019-10-28T12:58:17', author: 'gdml' }, '201910281258gdml'],
-    [{ date: '2019-10-28T12:59:17', author: '100500' }, '201910281259100500'],
-    [{ date: '2019-11-28T13:11:17', author: '100500' }, '201911281311100500'],
+    [{ timestamp: '2019-10-28T12:58:17', author: 'gdml' }, '201910281258gdml'],
+    [{ timestamp: '2019-10-28T12:58:17', author: 'gdml' }, '201910281258gdml'],
+    [{ timestamp: '2019-10-28T12:59:17', author: '100500' }, '201910281259100500'],
+    [{ timestamp: '2019-11-28T13:11:17', author: '100500' }, '201911281311100500'],
   ]).test('Returns hash of message', (message, expected) => {
     const got = MessageLibrary.getMessageHash(message);
 
@@ -24,46 +24,46 @@ describe('getHash', () => {
 
 describe('sortByDate', () => {
   it('Doesnt modify argument', () => {
-    const messages = [{ date: '2019-10-28T12:58:17' }, { date: '2019-10-29T12:58:17' }];
+    const messages = [{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2019-10-29T12:58:17' }];
 
     MessageLibrary.sortByDate(messages);
 
-    expect(messages).toEqual([{ date: '2019-10-28T12:58:17' }, { date: '2019-10-29T12:58:17' }]);
+    expect(messages).toEqual([{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2019-10-29T12:58:17' }]);
   });
 
   it('Doesnt sort already sorted', () => {
-    const messages = [{ date: '2019-10-28T12:58:17' }, { date: '2019-10-28T12:58:18' }];
+    const messages = [{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2019-10-28T12:58:18' }];
 
     const got = MessageLibrary.sortByDate(messages);
 
-    expect(got).toEqual([{ date: '2019-10-28T12:58:17' }, { date: '2019-10-28T12:58:18' }]);
+    expect(got).toEqual([{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2019-10-28T12:58:18' }]);
   });
 
   it('Sorts non sorted', () => {
-    const messages = [{ date: '2019-10-28T12:58:17' }, { date: '2020-10-29T12:58:17' }];
+    const messages = [{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2020-10-29T12:58:17' }];
 
     const got = MessageLibrary.sortByDate(messages);
 
-    expect(got).toEqual([{ date: '2019-10-28T12:58:17' }, { date: '2020-10-29T12:58:17' }]);
+    expect(got).toEqual([{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2020-10-29T12:58:17' }]);
   });
 });
 
 
 describe('group', () => {
   const messages = [
-    { date: '2019-10-28T12:58:19', author: 'gdml' },
-    { date: '2019-10-28T12:59:19', author: 'gdml' },
-    { date: '2019-10-28T12:59:20', author: '100500' },
-    { date: '2019-10-28T12:59:21', author: 'gdml' },
-    { date: '2019-10-28T12:59:22', author: 'gdml' },
-    { date: '2019-10-28T12:58:17', author: 'gdml' },
-    { date: '2019-10-28T13:00:22', author: '100500' },
-    { date: '2019-10-28T13:00:23', author: '100500' },
-    { date: '2019-10-29T13:00:24', author: '100500' },
-    { date: '2019-11-29T13:00:23', author: '100500' },
-    { date: '2020-11-29T13:00:23', author: '100500' },
-    { date: '2020-11-29T13:00:23', author: 'gdml' },
-    { date: '2020-11-29T13:00:24', author: '100500' },
+    { timestamp: '2019-10-28T12:58:19', author: 'gdml' },
+    { timestamp: '2019-10-28T12:59:19', author: 'gdml' },
+    { timestamp: '2019-10-28T12:59:20', author: '100500' },
+    { timestamp: '2019-10-28T12:59:21', author: 'gdml' },
+    { timestamp: '2019-10-28T12:59:22', author: 'gdml' },
+    { timestamp: '2019-10-28T12:58:17', author: 'gdml' },
+    { timestamp: '2019-10-28T13:00:22', author: '100500' },
+    { timestamp: '2019-10-28T13:00:23', author: '100500' },
+    { timestamp: '2019-10-29T13:00:24', author: '100500' },
+    { timestamp: '2019-11-29T13:00:23', author: '100500' },
+    { timestamp: '2020-11-29T13:00:23', author: '100500' },
+    { timestamp: '2020-11-29T13:00:23', author: 'gdml' },
+    { timestamp: '2020-11-29T13:00:24', author: '100500' },
   ];
 
   it('Returns messages grouped by minute and author', () => {
@@ -71,37 +71,37 @@ describe('group', () => {
 
     expect(got).toEqual([
       [
-        { date: '2019-10-28T12:58:17', author: 'gdml' },
-        { date: '2019-10-28T12:58:19', author: 'gdml' },
+        { timestamp: '2019-10-28T12:58:17', author: 'gdml' },
+        { timestamp: '2019-10-28T12:58:19', author: 'gdml' },
       ],
       [
-        { date: '2019-10-28T12:59:19', author: 'gdml' },
+        { timestamp: '2019-10-28T12:59:19', author: 'gdml' },
       ],
       [
-        { date: '2019-10-28T12:59:20', author: '100500' },
+        { timestamp: '2019-10-28T12:59:20', author: '100500' },
       ],
       [
-        { date: '2019-10-28T12:59:21', author: 'gdml' },
-        { date: '2019-10-28T12:59:22', author: 'gdml' },
+        { timestamp: '2019-10-28T12:59:21', author: 'gdml' },
+        { timestamp: '2019-10-28T12:59:22', author: 'gdml' },
       ],
       [
-        { date: '2019-10-28T13:00:22', author: '100500' },
-        { date: '2019-10-28T13:00:23', author: '100500' },
+        { timestamp: '2019-10-28T13:00:22', author: '100500' },
+        { timestamp: '2019-10-28T13:00:23', author: '100500' },
       ],
       [
-        { date: '2019-10-29T13:00:24', author: '100500' },
+        { timestamp: '2019-10-29T13:00:24', author: '100500' },
       ],
       [
-        { date: '2019-11-29T13:00:23', author: '100500' },
+        { timestamp: '2019-11-29T13:00:23', author: '100500' },
       ],
       [
-        { date: '2020-11-29T13:00:23', author: '100500' },
+        { timestamp: '2020-11-29T13:00:23', author: '100500' },
       ],
       [
-        { date: '2020-11-29T13:00:23', author: 'gdml' },
+        { timestamp: '2020-11-29T13:00:23', author: 'gdml' },
       ],
       [
-        { date: '2020-11-29T13:00:24', author: '100500' },
+        { timestamp: '2020-11-29T13:00:24', author: '100500' },
       ],
     ]);
   });

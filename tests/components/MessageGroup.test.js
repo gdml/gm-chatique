@@ -46,8 +46,8 @@ describe('time computed, date formatting', () => {
     ['2019-10-28T12:58:18', '12:58'],
     ['2019-10-28T12:58:23', '12:58'],
     ['2019-10-28T11:44:23', '11:44'],
-  ]).test('Test date formatting, %s -> %s', (date, expected) => {
-    props.messages = [{ date }];
+  ]).test('Test date formatting, %s -> %s', (timestamp, expected) => {
+    props.messages = [{ timestamp }];
 
     const wrapper = createWrapper();
 

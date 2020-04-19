@@ -1,7 +1,7 @@
 <template>
-  <a :href="message.data.src" class="gm-chat-image-message" target="_blank">
+  <a :href="message.media.url" class="gm-chat-image-message" target="_blank">
     <div class="gm-chat-message__text">
-      <img class="gm-chat-image-message__image" :src="message.data.src">
+      <img class="gm-chat-image-message__image" :src="message.media.url">
     </div>
   </a>
 </template>

@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import MessageLibrary from '../../helpers/message_library';
+import MessageLibrary from '../../helpers/messageLibrary';
 
 export default {
   props: {
@@ -14,7 +14,7 @@ export default {
   },
   computed: {
     withClickableLinks() {
-      return MessageLibrary.withLinks(this.message.data.content);
+      return MessageLibrary.withLinks(this.message.body);
     },
   },
 };

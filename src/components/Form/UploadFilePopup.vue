@@ -2,7 +2,6 @@
   <transition name="gm-chat-upload-file-popup-fade">
     <div v-if="isUploadPopupVisible" class="gm-chat-upload-file-popup" @click.self="handleCloseUploadMenu">
       <div class="gm-chat-upload-file-popup__items">
-        <CaptureCamera class="gm-chat-upload-file-popup__item gm-chat-upload-file-popup__item--gm-chat-camera" :platform="platform" @change="sendFile" />
         <FileUploader v-for="uploader in uploaders" :key="uploader.heading" :class="['gm-chat-upload-file-popup__item', `gm-chat-upload-file-popup__item--${uploader.icon}`]" v-bind="uploader" @change="sendFile" />
         <div class="gm-chat-upload-file-popup__cancel">
           <button class="gm-chat-button gm-chat-button--secondary" @click="handleCloseUploadMenu">Отмена</button>
@@ -15,16 +14,11 @@
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex';
 
-import CaptureCamera from '../CaptureCamera.vue';
 import FileUploader from '../FileUploader.vue';
 
 export default {
   components: {
     FileUploader,
-    CaptureCamera,
-  },
-  props: {
-    platform: { type: Object, required: true },
   },
   data() {
     return {
@@ -53,13 +47,14 @@ export default {
       this.SET_UPLOAD_POPUP_VISIBILITY(false);
     },
     async sendFile(file) {
+      this.SET_UPLOAD_POPUP_VISIBILITY(false);
       this.PUSH_NOTIFICATION({ type: 'info', message: 'Файл загружается…' });
 
-      this.SEND_MESSAGE({ parts: [{ file }] }).then(() => {
-        this.PUSH_NOTIFICATION({ type: 'success', message: 'Файл успешно загружен' });
-      });
+      const formData = new FormData();
+      formData.append('file', file);
+      await this.SEND_MESSAGE(formData);
 
-      this.SET_UPLOAD_POPUP_VISIBILITY(false);
+      this.PUSH_NOTIFICATION({ type: 'success', message: 'Файл успешно загружен' });
     },
   },
 };
