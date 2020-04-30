@@ -1,7 +1,7 @@
 <template>
   <div v-if="messages.length" class="gm-chat-message-group">
     <div class="gm-chat-message-group__messages">
-      <MessageObserver v-for="message in messages" :key="message.id" class="gm-chat-message-group__message" :user="user" :message="message" />
+      <MessageObserver v-for="(message, idx) in messages" :key="message.id" class="gm-chat-message-group__message" :user="user" :message="message" :prev-message="getPrevMessage(idx)" />
     </div>
     <div class="gm-chat-message-group__time" :class="{ 'gm-chat-message-group__time--outgoing': isOutgoing }" v-text="time" />
   </div>
@@ -26,6 +26,11 @@ export default {
     },
     isOutgoing() {
       return this.messages.some((msg) => msg.author === String(this.user.id));
+    },
+  },
+  methods: {
+    getPrevMessage(idx) {
+      return this.messages[idx - 1] || null;
     },
   },
 };
