@@ -1,5 +1,8 @@
 <template>
-  <component :is="getComponent" v-if="getComponent" :class="classes" :message="message" />
+  <div class="gm-chat-message-observer">
+    <div v-if="authorIsShown" class="gm-chat-message-observer__author" v-text="author" />
+    <component :is="getComponent" v-if="getComponent" :class="componentClasses" :message="message" />
+  </div>
 </template>
 
 <script>
@@ -13,9 +16,30 @@ export default {
   props: {
     user: { type: Object, required: true },
     message: { type: Object, required: true },
+    prevMessage: { type: Object, default: null },
   },
   computed: {
-    classes() {
+    attributes() {
+      return this.message.attributes || {};
+    },
+    prevMessageAttributes() {
+      return this.prevMessage ? this.prevMessage.attributes : {};
+    },
+    author() {
+      return this.attributes.senderName || '';
+    },
+    prevMessageAuthor() {
+      return this.prevMessageAttributes.senderName || '';
+    },
+    authorIsShown() {
+      const messageIsFirst = this.message.index === 0;
+      const messageIsOwn = this.message.author === `${this.user.id}`;
+
+      if (messageIsFirst || messageIsOwn) return false;
+
+      return this.author !== this.prevMessageAuthor;
+    },
+    componentClasses() {
       const base = 'gm-chat-message';
 
       return [
@@ -40,3 +64,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.gm-chat-message-observer {
+  &__author {
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+}
+</style>
