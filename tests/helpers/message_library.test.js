@@ -22,48 +22,48 @@ describe('getHash', () => {
 });
 
 
-describe('sortByDate', () => {
+describe('sortByIndex', () => {
   it('Doesnt modify argument', () => {
-    const messages = [{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2019-10-29T12:58:17' }];
+    const messages = [{ index: 22 }, { index: 23 }];
 
-    MessageLibrary.sortByDate(messages);
+    MessageLibrary.sortByIndex(messages);
 
-    expect(messages).toEqual([{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2019-10-29T12:58:17' }]);
+    expect(messages).toEqual([{ index: 22 }, { index: 23 }]);
   });
 
   it('Doesnt sort already sorted', () => {
-    const messages = [{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2019-10-28T12:58:18' }];
+    const messages = [{ index: 22 }, { index: 23 }];
 
-    const got = MessageLibrary.sortByDate(messages);
+    const got = MessageLibrary.sortByIndex(messages);
 
-    expect(got).toEqual([{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2019-10-28T12:58:18' }]);
+    expect(got).toEqual([{ index: 22 }, { index: 23 }]);
   });
 
   it('Sorts non sorted', () => {
-    const messages = [{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2020-10-29T12:58:17' }];
+    const messages = [{ index: 22 }, { index: 23 }];
 
-    const got = MessageLibrary.sortByDate(messages);
+    const got = MessageLibrary.sortByIndex(messages);
 
-    expect(got).toEqual([{ timestamp: '2019-10-28T12:58:17' }, { timestamp: '2020-10-29T12:58:17' }]);
+    expect(got).toEqual([{ index: 22 }, { index: 23 }]);
   });
 });
 
 
 describe('group', () => {
   const messages = [
-    { timestamp: '2019-10-28T12:58:19', author: 'gdml' },
-    { timestamp: '2019-10-28T12:59:19', author: 'gdml' },
-    { timestamp: '2019-10-28T12:59:20', author: '100500' },
-    { timestamp: '2019-10-28T12:59:21', author: 'gdml' },
-    { timestamp: '2019-10-28T12:59:22', author: 'gdml' },
-    { timestamp: '2019-10-28T12:58:17', author: 'gdml' },
-    { timestamp: '2019-10-28T13:00:22', author: '100500' },
-    { timestamp: '2019-10-28T13:00:23', author: '100500' },
-    { timestamp: '2019-10-29T13:00:24', author: '100500' },
-    { timestamp: '2019-11-29T13:00:23', author: '100500' },
-    { timestamp: '2020-11-29T13:00:23', author: '100500' },
-    { timestamp: '2020-11-29T13:00:23', author: 'gdml' },
-    { timestamp: '2020-11-29T13:00:24', author: '100500' },
+    { index: 2, timestamp: '2019-10-28T12:58:19', author: 'gdml' },
+    { index: 3, timestamp: '2019-10-28T12:59:19', author: 'gdml' },
+    { index: 4, timestamp: '2019-10-28T12:59:20', author: '100500' },
+    { index: 5, timestamp: '2019-10-28T12:59:21', author: 'gdml' },
+    { index: 6, timestamp: '2019-10-28T12:59:22', author: 'gdml' },
+    { index: 1, timestamp: '2019-10-28T12:58:17', author: 'gdml' },
+    { index: 7, timestamp: '2019-10-28T13:00:22', author: '100500' },
+    { index: 8, timestamp: '2019-10-28T13:00:23', author: '100500' },
+    { index: 9, timestamp: '2019-10-29T13:00:24', author: '100500' },
+    { index: 10, timestamp: '2019-11-29T13:00:23', author: '100500' },
+    { index: 11, timestamp: '2020-11-29T13:00:23', author: '100500' },
+    { index: 12, timestamp: '2020-11-29T13:00:23', author: 'gdml' },
+    { index: 13, timestamp: '2020-11-29T13:00:24', author: '100500' },
   ];
 
   it('Returns messages grouped by minute and author', () => {
@@ -71,37 +71,37 @@ describe('group', () => {
 
     expect(got).toEqual([
       [
-        { timestamp: '2019-10-28T12:58:17', author: 'gdml' },
-        { timestamp: '2019-10-28T12:58:19', author: 'gdml' },
+        { index: 1, timestamp: '2019-10-28T12:58:17', author: 'gdml' },
+        { index: 2, timestamp: '2019-10-28T12:58:19', author: 'gdml' },
       ],
       [
-        { timestamp: '2019-10-28T12:59:19', author: 'gdml' },
+        { index: 3, timestamp: '2019-10-28T12:59:19', author: 'gdml' },
       ],
       [
-        { timestamp: '2019-10-28T12:59:20', author: '100500' },
+        { index: 4, timestamp: '2019-10-28T12:59:20', author: '100500' },
       ],
       [
-        { timestamp: '2019-10-28T12:59:21', author: 'gdml' },
-        { timestamp: '2019-10-28T12:59:22', author: 'gdml' },
+        { index: 5, timestamp: '2019-10-28T12:59:21', author: 'gdml' },
+        { index: 6, timestamp: '2019-10-28T12:59:22', author: 'gdml' },
       ],
       [
-        { timestamp: '2019-10-28T13:00:22', author: '100500' },
-        { timestamp: '2019-10-28T13:00:23', author: '100500' },
+        { index: 7, timestamp: '2019-10-28T13:00:22', author: '100500' },
+        { index: 8, timestamp: '2019-10-28T13:00:23', author: '100500' },
       ],
       [
-        { timestamp: '2019-10-29T13:00:24', author: '100500' },
+        { index: 9, timestamp: '2019-10-29T13:00:24', author: '100500' },
       ],
       [
-        { timestamp: '2019-11-29T13:00:23', author: '100500' },
+        { index: 10, timestamp: '2019-11-29T13:00:23', author: '100500' },
       ],
       [
-        { timestamp: '2020-11-29T13:00:23', author: '100500' },
+        { index: 11, timestamp: '2020-11-29T13:00:23', author: '100500' },
       ],
       [
-        { timestamp: '2020-11-29T13:00:23', author: 'gdml' },
+        { index: 12, timestamp: '2020-11-29T13:00:23', author: 'gdml' },
       ],
       [
-        { timestamp: '2020-11-29T13:00:24', author: '100500' },
+        { index: 13, timestamp: '2020-11-29T13:00:24', author: '100500' },
       ],
     ]);
   });

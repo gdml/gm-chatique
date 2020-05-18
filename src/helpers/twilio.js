@@ -19,7 +19,7 @@ class TwilioClient {
     this.vuexContext = vuexContext;
 
     this.client = null;
-    this.currentChannel = null;
+    this.channels = {};
   }
 
   async getToken() {
@@ -44,33 +44,75 @@ class TwilioClient {
     this.client.on('connectionStateChanged', (status) => this.onConnectionStateChanged(status));
   }
 
-  async getOrCreateChannel(channelID) {
-    if (!this.client) await this.createClient();
-
-    try {
-      this.currentChannel = await this.client.getChannelByUniqueName(channelID);
-    } catch (e) {
-      this.currentChannel = await this.client.createChannel({
-        uniqueName: channelID,
-      });
-      this.currentChannel.join();
-    }
-    this.currentChannel.on('messageAdded', (message) => this.receiveMessage(message));
-
-    return this.currentChannel.state.uniqueName;
+  async getUserChannels() {
+    const paginator = await this.client.getUserChannelDescriptors();
+    await this.processUserChannelPaginator(paginator);
   }
 
-  async getAllMessages() {
-    const messagePaginator = await this.currentChannel.getMessages(1000);
+  async processUserChannelPaginator(paginator) {
+    const items = paginator.items.filter((item) => item.uniqueName);
+
+    items.forEach(async (channelDescriptor) => {
+      const obj = {};
+      obj[channelDescriptor.uniqueName] = {
+        uniqueName: channelDescriptor.uniqueName,
+        messagesCount: channelDescriptor.messagesCount,
+        lastConsumedMessageIndex: channelDescriptor.lastConsumedMessageIndex,
+        friendlyName: channelDescriptor.friendlyName,
+      };
+
+      this.vuexContext.commit('SET_CHANNELS', obj);
+      this.vuexContext.dispatch('GET_CHANNEL_LAST_MESSAGE', channelDescriptor.uniqueName);
+
+      this.channels[channelDescriptor.uniqueName] = await this.getOrCreateChannel(channelDescriptor.uniqueName);
+    });
+
+    if (paginator.hasNextPage) await this.processUserChannelPaginator(await paginator.nextPage());
+  }
+
+  async getOrCreateChannel(channelID) {
+    if (this.channels[channelID]) return this.channels[channelID];
+
+    if (!this.client) await this.createClient();
+
+    let channel;
+    try {
+      channel = await this.client.getChannelByUniqueName(channelID);
+    } catch (e) {
+      channel = await this.client.createChannel({
+        uniqueName: channelID,
+      });
+      await channel.join();
+    }
+    channel.on('messageAdded', (message) => this.receiveMessage(message));
+    this.channels[channelID] = channel;
+
+    return channel;
+  }
+
+  async getChannelMessages(channelID, pageSize = 1000) {
+    const channel = await this.getOrCreateChannel(channelID);
+    const messagePaginator = await channel.getMessages(pageSize);
     return messagePaginator.items;
+  }
+
+  async getChannelLastMessage(channelId) {
+    const messages = await this.getChannelMessages(channelId, 1);
+    return messages[0];
+  }
+
+  async setAllChannelMessagesConsumed(channelId) {
+    const channel = await this.getOrCreateChannel(channelId);
+    await channel.setAllMessagesConsumed();
   }
 
   async receiveMessage(message) {
     this.vuexContext.dispatch('gmChat/RECEIVE_MESSAGE', { message, channelName: message.channel.state.uniqueName }, { root: true });
   }
 
-  async sendMessage(message) {
-    return this.currentChannel.sendMessage(message);
+  async sendMessage(channelID, message) {
+    const channel = await this.getOrCreateChannel(channelID);
+    return channel.sendMessage(message);
   }
 }
 

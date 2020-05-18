@@ -8,9 +8,9 @@ export default {
     return `${dayjs(message.timestamp).format('YYYYMMDDHHmm')}${message.author}`;
   },
 
-  sortByDate(messages) {
-    /** Returns messages sorted by date (old goes first) */
-    return [...messages].sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
+  sortByIndex(messages) {
+    /** Returns messages sorted by index (old goes first) */
+    return [...messages].sort((a, b) => a.index - b.index);
   },
 
   group(messages) {
@@ -20,7 +20,7 @@ export default {
      */
     const groups = [[]];
 
-    this.sortByDate(messages).forEach((message, index, arr) => {
+    this.sortByIndex(messages).forEach((message, index, arr) => {
       const lastIndex = groups.length - 1;
       const prevMessage = arr[index - 1];
       const hash = this.getMessageHash(message);

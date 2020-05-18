@@ -5,7 +5,7 @@
       <div ref="messages" class="gm-chat__messages"
            :class="{ 'gm-chat__messages--connecting': connecting }"
       >
-        <MessageGroup v-for="(group, i) in groupByDate" :key="`gm-chat__message-group-${i}`"
+        <MessageGroup v-for="(group, i) in groupByDateCurrentChannelMessages" :key="`gm-chat__message-group-${i}`"
                       class="gm-chat__message-group" :user="user" :messages="group"
         />
       </div>
@@ -37,24 +37,24 @@ export default {
     channelId: { type: [String, Number], required: true },
   },
   computed: {
-    ...mapState('gmChat', ['connecting']),
+    ...mapState('gmChat', ['connecting', 'messages']),
     ...mapGetters('gmChat', [
-      'groupByDate',
-      'lastMessageOfCurrentChannel',
+      'groupByDateCurrentChannelMessages',
+      'currentChannelLastMessage',
       'user',
     ]),
     lastMessageIsMine() {
-      return get(this.lastMessageOfCurrentChannel, 'author') === String(this.user.id);
+      return get(this.currentChannelLastMessage, 'author') === String(this.user.id);
     },
     lastMessageDate() {
-      return get(this.lastMessageOfCurrentChannel, 'date');
+      return get(this.currentChannelLastMessage, 'date');
     },
   },
   watch: {
     async channelId() {
       await this.init();
     },
-    groupByDate() {
+    groupByDateCurrentChannelMessages() {
       if (!this.lastMessageIsMine) return;
 
       this.toBottom();
@@ -65,15 +65,20 @@ export default {
 
     this.toBottom();
   },
+  destroyed() {
+    this.RESET_CURRENT_CHANNEL();
+  },
   methods: {
     ...mapActions('gmChat', [
       'CONNECT',
-      'GET_ALL_MESSAGES',
+      'GET_CURRENT_CHANNEL_ALL_MESSAGES',
+      'SET_CURRENT_CHANNEL_MESSAGES_CONSUMED',
+      'RESET_CURRENT_CHANNEL',
     ]),
     async init() {
       const channelUniqueName = await this.CONNECT(this.channelId);
       if (channelUniqueName) {
-        await this.GET_ALL_MESSAGES();
+        this.SET_CURRENT_CHANNEL_MESSAGES_CONSUMED();
         this.toBottom();
       }
     },
