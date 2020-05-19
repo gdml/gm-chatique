@@ -3,66 +3,66 @@ import each from 'jest-each';
 import store from '@/store';
 
 
-describe('groupByDate', () => {
-  const { groupByDate, currentChannelMessages } = store.getters;
+describe('groupByDateChannelMessages', () => {
+  const { groupByDateChannelMessages } = store.getters;
 
   const state = {
     currentChannelName: 100500,
     messages: {
       100500: [
-        { timestamp: '2019-10-28T12:58:19', author: 'gdml' },
-        { timestamp: '2019-10-28T12:59:19', author: 'gdml' },
-        { timestamp: '2019-10-28T12:59:20', author: '100500' },
-        { timestamp: '2019-10-28T12:59:21', author: 'gdml' },
-        { timestamp: '2019-10-28T12:59:22', author: 'gdml' },
-        { timestamp: '2019-10-28T12:58:17', author: 'gdml' },
-        { timestamp: '2019-10-28T13:00:22', author: '100500' },
-        { timestamp: '2019-10-28T13:00:23', author: '100500' },
-        { timestamp: '2019-10-29T13:00:24', author: '100500' },
-        { timestamp: '2019-11-29T13:00:23', author: '100500' },
-        { timestamp: '2020-11-29T13:00:23', author: '100500' },
-        { timestamp: '2020-11-29T13:00:23', author: 'gdml' },
-        { timestamp: '2020-11-29T13:00:24', author: '100500' },
+        { index: 2, timestamp: '2019-10-28T12:58:19', author: 'gdml' },
+        { index: 3, timestamp: '2019-10-28T12:59:19', author: 'gdml' },
+        { index: 4, timestamp: '2019-10-28T12:59:20', author: '100500' },
+        { index: 5, timestamp: '2019-10-28T12:59:21', author: 'gdml' },
+        { index: 6, timestamp: '2019-10-28T12:59:22', author: 'gdml' },
+        { index: 1, timestamp: '2019-10-28T12:58:17', author: 'gdml' },
+        { index: 7, timestamp: '2019-10-28T13:00:22', author: '100500' },
+        { index: 8, timestamp: '2019-10-28T13:00:23', author: '100500' },
+        { index: 9, timestamp: '2019-10-29T13:00:24', author: '100500' },
+        { index: 10, timestamp: '2019-11-29T13:00:23', author: '100500' },
+        { index: 11, timestamp: '2020-11-29T13:00:23', author: '100500' },
+        { index: 12, timestamp: '2020-11-29T13:00:23', author: 'gdml' },
+        { index: 13, timestamp: '2020-11-29T13:00:24', author: '100500' },
       ],
     },
   };
 
   it('Returns messages grouped by minute', () => {
-    const got = groupByDate(state, { currentChannelMessages: currentChannelMessages(state) });
+    const got = groupByDateChannelMessages(state, { channelMessages: () => state.messages[100500] })(100500);
 
     expect(got).toEqual([
       [
-        { timestamp: '2019-10-28T12:58:17', author: 'gdml' },
-        { timestamp: '2019-10-28T12:58:19', author: 'gdml' },
+        { index: 1, timestamp: '2019-10-28T12:58:17', author: 'gdml' },
+        { index: 2, timestamp: '2019-10-28T12:58:19', author: 'gdml' },
       ],
       [
-        { timestamp: '2019-10-28T12:59:19', author: 'gdml' },
+        { index: 3, timestamp: '2019-10-28T12:59:19', author: 'gdml' },
       ],
       [
-        { timestamp: '2019-10-28T12:59:20', author: '100500' },
+        { index: 4, timestamp: '2019-10-28T12:59:20', author: '100500' },
       ],
       [
-        { timestamp: '2019-10-28T12:59:21', author: 'gdml' },
-        { timestamp: '2019-10-28T12:59:22', author: 'gdml' },
+        { index: 5, timestamp: '2019-10-28T12:59:21', author: 'gdml' },
+        { index: 6, timestamp: '2019-10-28T12:59:22', author: 'gdml' },
       ],
       [
-        { timestamp: '2019-10-28T13:00:22', author: '100500' },
-        { timestamp: '2019-10-28T13:00:23', author: '100500' },
+        { index: 7, timestamp: '2019-10-28T13:00:22', author: '100500' },
+        { index: 8, timestamp: '2019-10-28T13:00:23', author: '100500' },
       ],
       [
-        { timestamp: '2019-10-29T13:00:24', author: '100500' },
+        { index: 9, timestamp: '2019-10-29T13:00:24', author: '100500' },
       ],
       [
-        { timestamp: '2019-11-29T13:00:23', author: '100500' },
+        { index: 10, timestamp: '2019-11-29T13:00:23', author: '100500' },
       ],
       [
-        { timestamp: '2020-11-29T13:00:23', author: '100500' },
+        { index: 11, timestamp: '2020-11-29T13:00:23', author: '100500' },
       ],
       [
-        { timestamp: '2020-11-29T13:00:23', author: 'gdml' },
+        { index: 12, timestamp: '2020-11-29T13:00:23', author: 'gdml' },
       ],
       [
-        { timestamp: '2020-11-29T13:00:24', author: '100500' },
+        { index: 13, timestamp: '2020-11-29T13:00:24', author: '100500' },
       ],
     ]);
   });
@@ -99,15 +99,15 @@ describe('currentChannelMessages getter', () => {
 });
 
 
-describe('lastMessageOfCurrentChannel getter', () => {
-  const { lastMessageOfCurrentChannel } = store.getters;
+describe('channelLastMessage getter', () => {
+  const { channelLastMessage } = store.getters;
 
   each([
-    [[{ timestamp: '2019-10-28T12:58:18' }, { timestamp: '2019-10-28T12:58:17' }], { timestamp: '2019-10-28T12:58:18' }],
-    [[{ timestamp: '2019-10-28T12:58:17' }], { timestamp: '2019-10-28T12:58:17' }],
-    [[], undefined],
-  ]).test('Returns last message of current room', (currentChannelMessages, expected) => {
-    const got = lastMessageOfCurrentChannel({}, { currentChannelMessages });
+    [{ 100500: [{ index: 2, timestamp: '2019-10-28T12:58:18' }, { index: 1, timestamp: '2019-10-28T12:58:17' }] }, { index: 2, timestamp: '2019-10-28T12:58:18' }],
+    [{ 100500: [{ index: 1, timestamp: '2019-10-28T12:58:17' }] }, { index: 1, timestamp: '2019-10-28T12:58:17' }],
+    [{ 100500: [] }, undefined],
+  ]).test('Returns last message of channel', (messages, expected) => {
+    const got = channelLastMessage({ messages })(100500);
 
     expect(got).toEqual(expected);
   });
