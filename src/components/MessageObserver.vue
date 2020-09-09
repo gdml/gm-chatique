@@ -52,7 +52,7 @@ export default {
       if (this.message.type === 'media') {
         const { contentType } = this.message.media;
 
-        if (contentType.match('^image/*')) return ImageMessage;
+        if (contentType && contentType.match('^image/*')) return ImageMessage;
 
         return DocumentMessage;
       }

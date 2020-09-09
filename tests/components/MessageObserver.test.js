@@ -51,6 +51,7 @@ describe('getComponent computed, returns component class for message type', () =
     ['media', { contentType: 'image/da_vashe_poebat' }, ImageMessage],
     ['media', { contentType: 'application/pdf' }, DocumentMessage],
     ['media', { contentType: 'application/msword' }, DocumentMessage],
+    ['media', {}, DocumentMessage],
     ['foobar', { contentType: 'non_existent' }, UnsupportedMessage],
   ]).test('Returns component class for particular message type %s', (type, media, expected) => {
     props.message = { type, media };
