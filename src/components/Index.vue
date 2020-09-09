@@ -62,8 +62,7 @@ export default {
   },
   async mounted() {
     await this.init();
-
-    this.toBottom();
+    await this.toBottom();
   },
   destroyed() {
     this.RESET_CURRENT_CHANNEL();
@@ -79,7 +78,7 @@ export default {
       const channelUniqueName = await this.CONNECT(this.channelId);
       if (channelUniqueName) {
         this.SET_CURRENT_CHANNEL_MESSAGES_CONSUMED();
-        this.toBottom();
+        await this.toBottom();
       }
     },
     async toBottom() {
