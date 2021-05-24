@@ -83,8 +83,9 @@ export default {
     },
     async toBottom() {
       await this.$nextTick();
+      await this.$nextTick();
 
-      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
+      this.$refs.messages.scrollTop = this.$refs.messages ? this.$refs.messages.scrollHeight : 0;
     },
   },
 };
