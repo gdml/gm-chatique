@@ -17,7 +17,7 @@ export default {
     messages: {},
     connected: false,
     connecting: false,
-    currentChannelName: null,
+    currentChannelName: '',
 
     isUploadPopupVisible: false,
     isInputFocused: false,
@@ -48,6 +48,7 @@ export default {
       }),
     currentChannelLastMessage: (state, getters) => getters.channelLastMessage(state.currentChannelName),
     channelHasUnreadMessages: (state, getters) => (channelId) => {
+      if (!channelId) return false;
       const channelLastMessage = getters.channelLastMessage(channelId);
       const { lastConsumedMessageIndex } = state.channels[channelId];
 
@@ -189,9 +190,10 @@ export default {
       state.currentChannelName = is.uniqueName;
     },
     RESET_CURRENT_CHANNEL(state) {
-      state.currentChannelName = null;
+      state.currentChannelName = '';
     },
     RECEIVE_MESSAGE(state, { channelName, message }) {
+      if (!channelName) return;
       const index = state.messages[channelName].findIndex(existing => existing.sid === message.sid);
 
       if (index === -1) {
