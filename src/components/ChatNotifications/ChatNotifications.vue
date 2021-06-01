@@ -1,7 +1,7 @@
 <template>
   <div class="gm-chat-notifications">
     <transition name="gm-chat-notifications__messages-fade">
-      <ChatNotificationsMessage v-if="show" heading="Нет подключения к интернету" :subheading="subheading" icon="gm-chat-no-internet" />
+      <ChatNotificationsMessage v-if="show" heading="Нет подключения к чату" :subheading="subheading" icon="gm-chat-no-internet" />
       <ChatNotificationsMessage v-if="connecting" heading="Подключение к сети…" subheading="Загрузка сообщений и проверка соединения" spinner />
     </transition>
     <transition-group class="gm-chat-notifications__container" tag="ul" name="gm-chat-notifications__container-fade" :duration="{ enter: 250, leave: 0 }">

@@ -41,7 +41,7 @@ class TwilioClient {
 
     this.client = await Client.create(token);
     this.client.on('tokenExpired', () => this.refreshToken());
-    this.client.on('connectionStateChanged', (status) => this.onConnectionStateChanged(status));
+    this.client.on('connectionStateChanged', status => this.onConnectionStateChanged(status));
   }
 
   async getUserChannels() {
@@ -50,7 +50,7 @@ class TwilioClient {
   }
 
   async processUserChannelPaginator(paginator) {
-    const items = paginator.items.filter((item) => item.uniqueName);
+    const items = paginator.items.filter(item => item.uniqueName);
 
     items.forEach(async (channelDescriptor) => {
       const obj = {};
@@ -84,7 +84,7 @@ class TwilioClient {
       });
       await channel.join();
     }
-    channel.on('messageAdded', (message) => this.receiveMessage(message));
+    channel.on('messageAdded', message => this.receiveMessage(message));
     this.channels[channelID] = channel;
 
     return channel;

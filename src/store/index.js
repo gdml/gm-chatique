@@ -11,27 +11,28 @@ export default {
     notifications,
   },
   state: {
+    init: true,
     config: null,
     channels: {},
     messages: {},
     connected: false,
     connecting: false,
-    currentChannelName: null,
+    currentChannelName: '',
 
     isUploadPopupVisible: false,
     isInputFocused: false,
     messageText: '',
   },
   getters: {
-    channelMessages: (state) => (channelId) => state.messages[channelId] || [],
-    currentChannel: (state) => state.channels[state.currentChannelName],
-    currentChannelMessages: (state) => state.messages[state.currentChannelName] || [],
-    channelLastMessage: (state) => (channelId) => {
+    channelMessages: state => channelId => state.messages[channelId] || [],
+    currentChannel: state => state.channels[state.currentChannelName],
+    currentChannelMessages: state => state.messages[state.currentChannelName] || [],
+    channelLastMessage: state => (channelId) => {
       const messages = MessageLibrary.sortByIndex(state.messages[channelId] || []);
       return messages[messages.length - 1];
     },
     channelsSortedByLastMessage: (state, getters) => Object.values(state.channels)
-      .filter((channel) => getters.channelLastMessage(channel.uniqueName))
+      .filter(channel => getters.channelLastMessage(channel.uniqueName))
       .sort((a, b) => {
         const aHasUnreadMessages = getters.channelHasUnreadMessages(a.uniqueName) ? 1 : -1;
         const bHasUnreadMessages = getters.channelHasUnreadMessages(b.uniqueName) ? 1 : -1;
@@ -47,6 +48,7 @@ export default {
       }),
     currentChannelLastMessage: (state, getters) => getters.channelLastMessage(state.currentChannelName),
     channelHasUnreadMessages: (state, getters) => (channelId) => {
+      if (!channelId) return false;
       const channelLastMessage = getters.channelLastMessage(channelId);
       const { lastConsumedMessageIndex } = state.channels[channelId];
 
@@ -54,10 +56,10 @@ export default {
 
       return channelLastMessage.index !== lastConsumedMessageIndex;
     },
-    anyChannelHasUnreadMessages: (state, getters) => Object.values(state.channels).some((channel) => getters.channelHasUnreadMessages(channel.uniqueName)),
-    groupByDateChannelMessages: (state) => (channelId) => MessageLibrary.group(state.messages[channelId] || []),
-    groupByDateCurrentChannelMessages: (state) => MessageLibrary.group(state.messages[state.currentChannelName] || []),
-    user: (state) => state.config.user,
+    anyChannelHasUnreadMessages: (state, getters) => Object.values(state.channels).some(channel => getters.channelHasUnreadMessages(channel.uniqueName)),
+    groupByDateChannelMessages: state => channelId => MessageLibrary.group(state.messages[channelId] || []),
+    groupByDateCurrentChannelMessages: state => MessageLibrary.group(state.messages[state.currentChannelName] || []),
+    user: state => state.config.user,
   },
   actions: {
     async INIT(ctx, config) {
@@ -67,6 +69,7 @@ export default {
       await twilioClient.createClient();
 
       await twilioClient.getUserChannels();
+      ctx.commit('SET_INIT', false);
     },
     async CONNECT(ctx, channelID) {
       try {
@@ -100,7 +103,7 @@ export default {
     },
     async GET_CURRENT_CHANNEL_ALL_MESSAGES({ state, dispatch }) {
       const twilioMessages = await twilioClient.getChannelMessages(state.currentChannelName);
-      twilioMessages.forEach((message) => dispatch(
+      twilioMessages.forEach(message => dispatch(
         'RECEIVE_MESSAGE',
         {
           channelName: state.currentChannelName,
@@ -164,6 +167,9 @@ export default {
     },
   },
   mutations: {
+    SET_INIT(state, is) {
+      state.init = is;
+    },
     SET_CONFIG(state, is) {
       state.config = is;
     },
@@ -184,10 +190,11 @@ export default {
       state.currentChannelName = is.uniqueName;
     },
     RESET_CURRENT_CHANNEL(state) {
-      state.currentChannelName = null;
+      state.currentChannelName = '';
     },
     RECEIVE_MESSAGE(state, { channelName, message }) {
-      const index = state.messages[channelName].findIndex((existing) => existing.sid === message.sid);
+      if (!channelName) return;
+      const index = state.messages[channelName].findIndex(existing => existing.sid === message.sid);
 
       if (index === -1) {
         state.messages[channelName].push({ ...message });
