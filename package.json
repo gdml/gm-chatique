@@ -1,6 +1,6 @@
 {
   "name": "gm-chatique",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "author": "Dmitry <dimavoid@gmail.com>",
   "main": "src/index.js",
   "scripts": {
