@@ -56,7 +56,6 @@ class TwilioClient {
       const obj = {};
       obj[channelDescriptor.uniqueName] = {
         uniqueName: channelDescriptor.uniqueName,
-        messagesCount: channelDescriptor.messagesCount,
         lastConsumedMessageIndex: channelDescriptor.lastConsumedMessageIndex,
         friendlyName: channelDescriptor.friendlyName,
       };
