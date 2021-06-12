@@ -81,10 +81,9 @@ export default {
 
         const channels = {};
         channels[channelID] = {
-          uniqueName: channel.state.uniqueName,
-          messagesCount: channel.state.messagesCount,
-          lastConsumedMessageIndex: channel.state.lastConsumedMessageIndex,
-          friendlyName: channel.state.friendlyName,
+          uniqueName: channel.channelState.uniqueName,
+          lastConsumedMessageIndex: channel.channelState.lastConsumedMessageIndex,
+          friendlyName: channel.channelState.friendlyName,
         };
         ctx.commit('SET_CHANNELS', channels);
 
@@ -94,6 +93,7 @@ export default {
 
         ctx.dispatch('GET_CURRENT_CHANNEL_ALL_MESSAGES');
       } catch (e) {
+        console.error(e);
         ctx.commit('SET_CONNECTED', false);
       } finally {
         ctx.commit('SET_CONNECTING', false);
